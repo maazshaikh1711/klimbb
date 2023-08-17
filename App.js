@@ -1,40 +1,34 @@
-import React from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View
-} from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Text } from 'react-native';
 
-import {
-  Colors,
-} from 'react-native/Libraries/NewAppScreen';
+const App = () => {
 
-const App = () =>{
-  const isDarkMode = useColorScheme() === 'dark';
-  
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  const data = [
+    { id: 1, title: 'Title 1', description: 'Description 1' },
+    { id: 2, title: 'Title 2', description: 'Description 2' },
+    { id: 3, title: 'Title 3', description: 'Description 3'},
+    { id: 4, title: 'Title 4', description: 'Description 4'},
+    { id: 5, title: 'Title 5', description: 'Description 5'},
+  ];
+
+  const handleCardPress = (card) => {
+    console.log("card pressed : ", card.title)
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <View>
-        <Text>Hello Kirana Club!</Text>
-      </View>
-    </SafeAreaView>
+    <View style={styles.container}>
+      {data.map((item) => (
+        // write logic to display a card.
+      ))}
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-
+  container: {
+    flex: 1,
+    padding: 20,
+  },
 });
 
 export default App;
