@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 
+import TileCard from './src/cards/TileCard';
+
 const App = () => {
 
   const data = [
@@ -18,7 +20,12 @@ const App = () => {
   return (
     <View style={styles.container}>
       {data.map((item) => (
-        // write logic to display a card.
+        <TileCard
+          key={item.id}
+          title={item.title}
+          shortDescription={item.description}
+          onPress={() => handleCardPress(item)}
+        />
       ))}
     </View>
   );
