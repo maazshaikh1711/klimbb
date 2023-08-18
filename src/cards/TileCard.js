@@ -8,7 +8,7 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 
-const TileCard = ({ id, title, description, onSwipe }) => {
+const TileCard = ({ id, title, description, onSwipe, onPress, showDelete }) => {
   const translateX = useSharedValue(0);
 
   const handleGesture = useAnimatedGestureHandler({
@@ -31,9 +31,11 @@ const TileCard = ({ id, title, description, onSwipe }) => {
   return (
     <View style={styles.container}>
       {/* Red background with "DELETE" text */}
-      <View style={styles.background}>
-        <Text style={styles.deleteText}>DELETE</Text>
-      </View>
+      {showDelete && (
+        <View style={styles.background}>
+          <Text style={styles.deleteText}>DELETE</Text>
+        </View>
+      )}
 
       <PanGestureHandler onGestureEvent={handleGesture}>
         <Animated.View

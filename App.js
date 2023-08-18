@@ -43,9 +43,14 @@ const App = () =>{
 
   const handleCardSwipe = (card) => {
     console.log("card swiped : ", card.title)
-    lodash.remove(tileCard, obj => obj.id === card.id)
-    console.log("New data list : ", tileCard)
-    setTileCard(tileCard)
+    // lodash.remove(tileCard, obj => obj.id === card.id)
+    const updatedTileCard = tileCard.map((item) => {
+      if (item.id === card.id) {
+        return { ...item, showDelete: false };
+      }
+      return item;
+    });
+    setTileCard(updatedTileCard);
   };
 
   return (
@@ -61,6 +66,7 @@ const App = () =>{
               id={item.id}
               title={item.title}
               description={item.description}
+              showDelete={item.showDelete}
               onSwipe={() => handleCardSwipe(item)}
               onPress={() => handleCardPress(item)}
             />
