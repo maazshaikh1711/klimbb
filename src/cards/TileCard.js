@@ -17,14 +17,20 @@ const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinP
       ctx.startX = translateX.value;
     },
     onActive: (event, ctx) => {
-      translateX.value = ctx.startX + event.translationX;
+      if (!pinned) {
+        translateX.value = ctx.startX + event.translationX;
+      }
     },
     onEnd: (event) => {
-      if (event.translationX <= -100) {
-        translateX.value = withSpring(-400); // Swipe fully left
-        runOnJS(onSwipe)(id);
+      if (!pinned) {
+        if (event.translationX <= -100) {
+          translateX.value = withSpring(-400); // Swipe fully left
+          runOnJS(onSwipe)(id);
+        } else {
+          translateX.value = withSpring(0); // Reset position for pinned cards
+        }
       } else {
-        translateX.value = withSpring(0); // Reset position
+        translateX.value = withSpring(0); // Reset position for pinned cards
       }
     },
   });
@@ -55,9 +61,11 @@ const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinP
             {/* Circle button */}
             <TouchableOpacity
               style={styles.circleButton}
-              onPress={() => onPinPress({ id, title, description, showDelete})}
+              onPress={() => {
+                onPinPress({ id, title, description, showDelete, pinned: !pinned})
+              }}
             >
-              <View style={styles.circle} />
+              <View style={{...styles.circle, backgroundColor: pinned ? "red" : "green"}} />
             </TouchableOpacity>
           </Animated.View>
         </PanGestureHandler>
@@ -99,7 +107,7 @@ const styles = StyleSheet.create({
   circle: {
     width: 40, // Adjust the size of the circle button
     height: 40, // Adjust the size of the circle button
-    backgroundColor: 'grey',
+    // backgroundColor: 'grey',
     borderRadius: 20, // Make it a circle
   },
   background: {

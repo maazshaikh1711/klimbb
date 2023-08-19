@@ -81,10 +81,13 @@ const App = () =>{
   };
 
   const handlePinToTop = (card) => {
-    console.log("HIIIIIIIIII", card)
     setTileCard((prevTileCard) => {
       const updatedTileCard = prevTileCard.filter((item) => item.id !== card.id);
-      return [card, ...updatedTileCard];
+      if(card.pinned === true) {
+        return [card, ...updatedTileCard]     // when pinned, card is shifted to top
+      } else {
+        return [...updatedTileCard, card]     // when unpinned, card is shifted to bottom
+      } ;
     });
   };
 
@@ -104,8 +107,8 @@ const App = () =>{
                 pinned={item.pinned}
                 showDelete={item.showDelete}
                 onSwipe={() => handleCardSwipe(item)}
-                onCardPress={() => handleCardPress(item)}
-                onPinPress={()=> handlePinToTop(item)} 
+                // onCardPress={() => handleCardPress(item)}
+                onPinPress={handlePinToTop} 
                 index={index}
               />
             )}
