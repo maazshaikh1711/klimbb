@@ -20,6 +20,11 @@ const lodash = require('lodash');
 import debounce from 'lodash/debounce';
 import { GestureHandlerRootView, TouchableOpacity } from 'react-native-gesture-handler';
 
+import { config } from 'dotenv';
+// Load environment variables from .env file
+// config();
+//const apiKey = process.env.NEW_API_kEY;
+
 const refreshTileCard = [
   { id: 1, title: 'Title 1', description: 'Description 1', showDelete: true, pinned: false },
   { id: 2, title: 'Title 2', description: 'Description 2', showDelete: true, pinned: false },
