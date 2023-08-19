@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { PanGestureHandler, TouchableOpacity } from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
@@ -32,25 +32,35 @@ const TileCard = ({ id, title, description, onSwipe, onPress, showDelete }) => {
   return (
     <View style={styles.container}>
       {/* Red background with "DELETE" text */}
-      <TouchableOpacity onPress={()=>onPress({ id, title, description})}>
+      {/* <TouchableWithoutFeedback onPress={()=>onPress({ id, title, description})}> */}
         {showDelete && (
           <View style={styles.background}>
             <Text style={styles.deleteText}>DELETE</Text>
           </View>
         )}
+      {/* </TouchableWithoutFeedback> */}
 
-        <PanGestureHandler onGestureEvent={handleGesture}>
+      <PanGestureHandler onGestureEvent={handleGesture}>
           <Animated.View
             style={[
               styles.cardContainer,
               { transform: [{ translateX }] },
             ]}
           >
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.description}>{description}</Text>
+            <View>
+              <Text style={styles.title}>{title}</Text>
+              <Text style={styles.description}>{description}</Text>
+            </View>
+
+            {/* Circle button */}
+            <TouchableOpacity
+              style={styles.circleButton}
+              onPress={() => console.log(`Button pressed for ID: ${id}`)}
+            >
+              <View style={styles.circle} />
+            </TouchableOpacity>
           </Animated.View>
         </PanGestureHandler>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -60,18 +70,37 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent', // Transparent background to allow the red background to show
     marginBottom: 10,
     margin: 5,
+    flex: 1
   },
   cardContainer: {
     backgroundColor: 'lightgray',
     paddingVertical: 10,
+    paddingHorizontal: 10,
     // margin: 5,
     borderRadius: 5,
+    flex: 1,
+    flexDirection: 'row', // Arrange content horizontally
+    justifyContent: 'space-between', // Align content to the ends (left and right)
+    alignItems: 'center', // Vertically center-align content
   },
   title: {
     fontSize: 16,
+    marginBottom: 5,
   },
   description: {
     fontSize: 12,
+  },
+  circleButton: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    // backgroundColor: "black",
+  },
+  circle: {
+    width: 40, // Adjust the size of the circle button
+    height: 40, // Adjust the size of the circle button
+    backgroundColor: 'grey',
+    borderRadius: 20, // Make it a circle
   },
   background: {
     position: 'absolute',
