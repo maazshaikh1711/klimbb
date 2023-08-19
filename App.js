@@ -37,9 +37,6 @@ const App = () =>{
   ]);
 
   useEffect(()=>{
-    console.log("..................................")
-    console.log("Tile Cardsss: ", tileCard)
-    console.log("..................................")
   }, [tileCard])
 
   const handleCardPress = (card) => {
@@ -75,7 +72,6 @@ const App = () =>{
   return (
     <GestureHandlerRootView style={styles.container}>
       <View style={styles.container}>
-        <Text>Hiiiiiiiiii</Text>
         {tileCard?.length > 0 ?
           <FlatList
             data={tileCard}
