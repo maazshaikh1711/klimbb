@@ -8,8 +8,8 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 
-const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinPress, showDelete}) => {
-  console.log(`Rendering TileCard with ID: ${id}, title: ${title}, showDelete: ${showDelete}` );
+const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinPress, showDelete, photoUrl}) => {
+  console.log(`Rendering TileCard with ID: ${id}, title: ${title}, phtotURL: ${photoUrl}, showDelete: ${showDelete}, pinned: ${pinned}` );
   const translateX = useSharedValue(0);
 
   const handleGesture = useAnimatedGestureHandler({
@@ -49,7 +49,7 @@ const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinP
             { transform: [{ translateX }] },
           ]}
         >
-          <TouchableWithoutFeedback onPress={()=>onCardPress({ id, title, description, showDelete})}>
+          <TouchableWithoutFeedback onPress={()=>onCardPress({ id, title, description, photoUrl, showDelete})}>
             <View style={[styles.cardContent, showDelete && styles.showDeleteBackground]}>
               <View style={styles.titleContainer}>
                 <Text style={styles.title}>{title}</Text>
@@ -65,9 +65,15 @@ const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinP
                 >
                   {
                     pinned ?
-                      <View style={{...styles.circle, backgroundColor: "red"}} />     // replace with pinned filled "pin" icon
+                      <View style={{...styles.circle, backgroundColor: "red"}}>     
+                        {/* replace with pinned filled "pin" icon */}
+                        <Text>Unpin</Text>
+                      </View>
                     :
-                      <View style={{...styles.circle, backgroundColor: "green"}} />   // replace with unpinned outlined "pin" icon
+                      <View style={{...styles.circle, backgroundColor: "green"}}>
+                        {/* replace with unpinned outlined "pin" icon */}
+                        <Text>Pin</Text>
+                      </View>
                   }
                 </TouchableWithoutFeedback>
               </View>
@@ -81,10 +87,8 @@ const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinP
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: 'transparent', // Transparent background to allow the red background to show
-    marginBottom: 10,
+    flex: 1,
     margin: 5,
-    flex: 1
   },
   cardContainer: {
     backgroundColor: 'transparent',
@@ -132,6 +136,8 @@ const styles = StyleSheet.create({
     height: 40, // Adjust the size of the circle button
     // backgroundColor: 'grey',
     borderRadius: 20, // Make it a circle
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   background: {
     position: 'absolute',

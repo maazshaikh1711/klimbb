@@ -40,14 +40,14 @@ const App = () =>{
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-  const [selectedCard, setSelectedCard] = useState(null);
+  const [selectedCard, setSelectedCard] = useState(false);
 
   const [tileCard, setTileCard] = useState([
-    { id: 1, title: 'Title 1', description: 'Description 1', showDelete: true, pinned: false },
-    { id: 2, title: 'Title 2', description: 'Description 2', showDelete: true, pinned: false },
-    { id: 3, title: 'Title 3', description: 'Description 3', showDelete: true, pinned: false },
-    { id: 4, title: 'Title 4', description: 'Description 4', showDelete: true, pinned: false },
-    { id: 5, title: 'Title 5', description: 'Description 5', showDelete: true, pinned: false },
+    // { id: 1, title: 'Title 1', description: 'Description 1', showDelete: true, pinned: false },
+    // { id: 2, title: 'Title 2', description: 'Description 2', showDelete: true, pinned: false },
+    // { id: 3, title: 'Title 3', description: 'Description 3', showDelete: true, pinned: false },
+    // { id: 4, title: 'Title 4', description: 'Description 4', showDelete: true, pinned: false },
+    // { id: 5, title: 'Title 5', description: 'Description 5', showDelete: true, pinned: false },
   ]);
 
   useEffect(()=>{
@@ -105,7 +105,11 @@ const App = () =>{
 
   const handleCardPress = (card) => {
     setSelectedCard(card);
-    console.log("Card list modified: ", card.title)
+    console.log("Card list modified: ", card)
+  };
+
+  const toggleModal = () => {
+    setSelectedCard(false);
   };
 
   const handleCardSwipe = (swipedCard) => {
@@ -159,6 +163,7 @@ const App = () =>{
                 id={item.id}
                 title={item.title}
                 description={item.description}
+                photoUrl={item.urlToImage}
                 pinned={item.pinned}
                 showDelete={item.showDelete}
                 onSwipe={() => handleCardSwipe(item)}
@@ -174,12 +179,19 @@ const App = () =>{
             {/* Call API to fetch new top 100 headlines */}
           </View>
         }
-        {selectedCard && (
+        
+        {
+          selectedCard 
+          && 
           <DetailCard
             title={selectedCard.title}
-            longDescription={selectedCard.description}
+            description={selectedCard.description}
+            photoUrl={selectedCard.photoUrl}
+            visible={selectedCard?true:false}
+            onClose={toggleModal}
           />
-        )}
+        }
+
         <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "green", borderWidth: 1, height: 75}} onPress={()=>fetchTopNews()}>
           <Text style={{color: "white", fontWeight:"bold"}}>REFRESH</Text>
         </TouchableOpacity>
