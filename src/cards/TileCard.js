@@ -51,24 +51,26 @@ const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinP
         >
           <TouchableWithoutFeedback onPress={()=>onCardPress({ id, title, description, showDelete})}>
             <View style={[styles.cardContent, showDelete && styles.showDeleteBackground]}>
-              <View>
+              <View style={styles.titleContainer}>
                 <Text style={styles.title}>{title}</Text>
               </View>
 
               {/* Circle button */}
-              <TouchableOpacity
-                style={styles.circleButton}
-                onPress={() => {
-                  onPinPress({ id, title, description, showDelete, pinned: !pinned})
-                }}
-              >
-                {
-                  pinned ?
-                    <View style={{...styles.circle, backgroundColor: "red"}} />     // replace with pinned filled "pin" icon
-                  :
-                    <View style={{...styles.circle, backgroundColor: "green"}} />   // replace with unpinned outlined "pin" icon
-                }
-              </TouchableOpacity>
+              <View style={styles.circleButtonContainer} pointerEvents="box-none">
+                <TouchableWithoutFeedback
+                  style={styles.circleButton}
+                  onPress={() => {
+                    onPinPress({ id, title, description, showDelete, pinned: !pinned})
+                  }}
+                >
+                  {
+                    pinned ?
+                      <View style={{...styles.circle, backgroundColor: "red"}} />     // replace with pinned filled "pin" icon
+                    :
+                      <View style={{...styles.circle, backgroundColor: "green"}} />   // replace with unpinned outlined "pin" icon
+                  }
+                </TouchableWithoutFeedback>
+              </View>
             </View>    
           </TouchableWithoutFeedback>
         </Animated.View>
@@ -96,6 +98,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 5,
   },
+  titleContainer: {
+    flex: 0.85, // 85 % width
+  },
   deleteContainer: {
     position: 'absolute',
     top: 0,
@@ -111,8 +116,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
   },
-  description: {
-    fontSize: 12,
+  circleButtonContainer: {
+    flex: 0.15, // 15% width
+    justifyContent: 'center',
+    alignItems: 'flex-end',
   },
   circleButton: {
     flex: 1,
