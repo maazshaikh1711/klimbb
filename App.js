@@ -21,11 +21,11 @@ import debounce from 'lodash/debounce';
 import { GestureHandlerRootView, TouchableOpacity } from 'react-native-gesture-handler';
 
 const refreshTileCard = [
-  { id: 1, title: 'Title 1', description: 'Description 1', showDelete: true },
-  { id: 2, title: 'Title 2', description: 'Description 2', showDelete: true },
-  { id: 3, title: 'Title 3', description: 'Description 3', showDelete: true },
-  { id: 4, title: 'Title 4', description: 'Description 4', showDelete: true },
-  { id: 5, title: 'Title 5', description: 'Description 5', showDelete: true },
+  { id: 1, title: 'Title 1', description: 'Description 1', showDelete: true, pinned: false },
+  { id: 2, title: 'Title 2', description: 'Description 2', showDelete: true, pinned: false },
+  { id: 3, title: 'Title 3', description: 'Description 3', showDelete: true, pinned: false },
+  { id: 4, title: 'Title 4', description: 'Description 4', showDelete: true, pinned: false },
+  { id: 5, title: 'Title 5', description: 'Description 5', showDelete: true, pinned: false },
 ]
 
 const App = () =>{
@@ -38,11 +38,11 @@ const App = () =>{
   const [selectedCard, setSelectedCard] = useState(null);
 
   const [tileCard, setTileCard] = useState([
-    { id: 1, title: 'Title 1', description: 'Description 1', showDelete: true },
-    { id: 2, title: 'Title 2', description: 'Description 2', showDelete: true },
-    { id: 3, title: 'Title 3', description: 'Description 3', showDelete: true },
-    { id: 4, title: 'Title 4', description: 'Description 4', showDelete: true },
-    { id: 5, title: 'Title 5', description: 'Description 5', showDelete: true },
+    { id: 1, title: 'Title 1', description: 'Description 1', showDelete: true, pinned: false },
+    { id: 2, title: 'Title 2', description: 'Description 2', showDelete: true, pinned: false },
+    { id: 3, title: 'Title 3', description: 'Description 3', showDelete: true, pinned: false },
+    { id: 4, title: 'Title 4', description: 'Description 4', showDelete: true, pinned: false },
+    { id: 5, title: 'Title 5', description: 'Description 5', showDelete: true, pinned: false },
   ]);
 
   useEffect(()=>{
@@ -80,6 +80,14 @@ const App = () =>{
       // console.log("New data list after filtering and adjusting id : ", updatedTileCard)
   };
 
+  const handlePinToTop = (card) => {
+    console.log("HIIIIIIIIII", card)
+    setTileCard((prevTileCard) => {
+      const updatedTileCard = prevTileCard.filter((item) => item.id !== card.id);
+      return [card, ...updatedTileCard];
+    });
+  };
+
   return (
     <GestureHandlerRootView style={styles.container}>
       <View style={styles.container}>
@@ -93,16 +101,18 @@ const App = () =>{
                 id={item.id}
                 title={item.title}
                 description={item.description}
+                pinned={item.pinned}
                 showDelete={item.showDelete}
                 onSwipe={() => handleCardSwipe(item)}
-                onPress={() => handleCardPress(item)}
+                onCardPress={() => handleCardPress(item)}
+                onPinPress={()=> handlePinToTop(item)} 
                 index={index}
               />
             )}
           />
         :
           <View style={{alignItems:"center", justifyContent: "center"}}>
-              <Text style={{color:"black"}}>You are all caught up!</Text>
+              {/* <Text style={{color:"black"}}>You are all caught up!</Text> */}
           </View>
         }
         {selectedCard && (

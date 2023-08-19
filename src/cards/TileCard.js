@@ -8,7 +8,7 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 
-const TileCard = ({ id, title, description, onSwipe, onPress, showDelete }) => {
+const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinPress, showDelete}) => {
   console.log(`Rendering TileCard with ID: ${id}, title: ${title}, showDelete: ${showDelete}` );
   const translateX = useSharedValue(0);
 
@@ -32,7 +32,7 @@ const TileCard = ({ id, title, description, onSwipe, onPress, showDelete }) => {
   return (
     <View style={styles.container}>
       {/* Red background with "DELETE" text */}
-      {/* <TouchableWithoutFeedback onPress={()=>onPress({ id, title, description})}> */}
+      {/* <TouchableWithoutFeedback onPress={()=>onCardPress({ id, title, description, showDelete})}> */}
         {showDelete && (
           <View style={styles.background}>
             <Text style={styles.deleteText}>DELETE</Text>
@@ -55,7 +55,7 @@ const TileCard = ({ id, title, description, onSwipe, onPress, showDelete }) => {
             {/* Circle button */}
             <TouchableOpacity
               style={styles.circleButton}
-              onPress={() => console.log(`Button pressed for ID: ${id}`)}
+              onPress={() => onPinPress({ id, title, description, showDelete})}
             >
               <View style={styles.circle} />
             </TouchableOpacity>
