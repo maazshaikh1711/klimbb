@@ -17,7 +17,16 @@ import TileCard from './src/cards/TileCard';
 
 //third party imports
 const lodash = require('lodash');
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import debounce from 'lodash/debounce';
+import { GestureHandlerRootView, TouchableOpacity } from 'react-native-gesture-handler';
+
+const refreshTileCard = [
+  { id: 1, title: 'Title 1', description: 'Description 1', showDelete: true },
+  { id: 2, title: 'Title 2', description: 'Description 2', showDelete: true },
+  { id: 3, title: 'Title 3', description: 'Description 3', showDelete: true },
+  { id: 4, title: 'Title 4', description: 'Description 4', showDelete: true },
+  { id: 5, title: 'Title 5', description: 'Description 5', showDelete: true },
+]
 
 const App = () =>{
   const isDarkMode = useColorScheme() === 'dark';
@@ -47,6 +56,10 @@ const App = () =>{
   const handleCardSwipe = (swipedCard) => {
     console.log("card swiped : ", swipedCard.title)    
 
+    const debounceSetTileCard = debounce((updatedTileCard) => {
+      setTileCard(updatedTileCard);
+    }, 100); // Debounce for 100 milliseconds
+
       setTileCard((prevTileCard) => {
         const updatedTileCard = prevTileCard
           .filter((item) => item.id !== swipedCard.id)
@@ -59,10 +72,8 @@ const App = () =>{
 
         console.log("After swiping a card: ", updatedTileCard);
 
-        // return updatedTileCard;
-        setTimeout(() => {
-          setTileCard(updatedTileCard);
-        }, 100); // Delay for a short duration to let the animation finish
+        // Use the debounced function to update the state
+        debounceSetTileCard(updatedTileCard);
       });
 
       setSelectedCard(null); // Clear the selected card
@@ -100,6 +111,9 @@ const App = () =>{
             longDescription={selectedCard.description}
           />
         )}
+        <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "green", borderWidth: 1, height: 75}} onPress={()=>setTileCard(refreshTileCard)}>
+          <Text style={{color: "white", fontWeight:"bold"}}>REFRESH</Text>
+        </TouchableOpacity>
       </View>
     </GestureHandlerRootView>
   );    
