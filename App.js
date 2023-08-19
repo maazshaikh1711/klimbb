@@ -53,9 +53,57 @@ const App = () =>{
   useEffect(()=>{
   }, [tileCard])
 
+  useEffect(()=>{
+    console.log("Fetching news")
+    fetchTopNews()
+  }, [])
+
+  const fetchTopNews = async () => {
+    try {
+      const newsJsonObject = await FetchNews("https://newsapi.org/v2/top-headlines?country=in&apiKey=");      //later move URL to .env file
+
+      if(newsJsonObject?.status){
+        if (newsJsonObject.status == "ok"){
+          if(newsJsonObject.articles.length>0){
+            const topFetchedNews = 
+              newsJsonObject.articles.slice(0, 5).map((obj, index)=>({
+                "id": index+1,
+                ...obj
+
+              })
+            )
+            console.log("Setting new news in a list",topFetchedNews)
+            setTileCard(topFetchedNews)
+          }
+        }
+        else{
+          console.log("Something went wrong in accessing the articles, (returned object from api, but it's status is not 'ok') ");
+        }
+      }
+      else{
+        console.log("Something went wrong in accessing articles, (returned object from api does not have status field) ");
+      }
+    }
+    catch(e){
+      console.log("Error: Something went wrong in accessing news: ", e.message);
+    }
+  }
+
+  const FetchNews =  async(newsLink) => {
+    try{
+        const NEWS_API_KEY = '54c4f5a2d447483b9a390b1ac9b436b6';   //later move it to .env file
+        const response = await fetch(newsLink+NEWS_API_KEY);
+        const news = await response.json();
+        return news;
+    }
+    catch{ (err) =>
+        console.error(`Some error occured: ${err.message}`);
+    }
+  }
+
   const handleCardPress = (card) => {
     setSelectedCard(card);
-    console.log("card pressed : ", card.title)
+    console.log("Card list modified: ", card.title)
   };
 
   const handleCardSwipe = (swipedCard) => {
@@ -120,7 +168,8 @@ const App = () =>{
           />
         :
           <View style={{alignItems:"center", justifyContent: "center"}}>
-              {/* <Text style={{color:"black"}}>You are all caught up!</Text> */}
+            {/* <Text style={{color:"black"}}>You are all caught up!</Text> */}
+            {/* Call API to fetch new top 100 headlines */}
           </View>
         }
         {selectedCard && (
@@ -129,7 +178,7 @@ const App = () =>{
             longDescription={selectedCard.description}
           />
         )}
-        <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "green", borderWidth: 1, height: 75}} onPress={()=>setTileCard(refreshTileCard)}>
+        <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "green", borderWidth: 1, height: 75}} onPress={()=>fetchTopNews()}>
           <Text style={{color: "white", fontWeight:"bold"}}>REFRESH</Text>
         </TouchableOpacity>
       </View>

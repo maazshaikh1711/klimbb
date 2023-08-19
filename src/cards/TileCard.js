@@ -41,6 +41,7 @@ const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinP
       {/* <TouchableWithoutFeedback onPress={()=>onCardPress({ id, title, description, showDelete})}> */}
         {showDelete && (
           <View style={styles.background}>
+            {/* replace with pinned filled "pin" icon */}
             <Text style={styles.deleteText}>DELETE</Text>
           </View>
         )}
@@ -65,7 +66,12 @@ const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinP
                 onPinPress({ id, title, description, showDelete, pinned: !pinned})
               }}
             >
-              <View style={{...styles.circle, backgroundColor: pinned ? "red" : "green"}} />
+              {
+                pinned ?
+                  <View style={{...styles.circle, backgroundColor: "red"}} />     // replace with pinned filled "pin" icon
+                :
+                  <View style={{...styles.circle, backgroundColor: "green"}} />   // replace with unpinned outlined "pin" icon
+              }
             </TouchableOpacity>
           </Animated.View>
         </PanGestureHandler>
