@@ -38,64 +38,74 @@ const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinP
   return (
     <View style={styles.container}>
       {/* Red background with "DELETE" text */}
-      {/* <TouchableWithoutFeedback onPress={()=>onCardPress({ id, title, description, showDelete})}> */}
-        {showDelete && (
-          <View style={styles.background}>
-            {/* replace with pinned filled "pin" icon */}
-            <Text style={styles.deleteText}>DELETE</Text>
-          </View>
-        )}
-      {/* </TouchableWithoutFeedback> */}
+      <View style={styles.deleteContainer}>
+        {showDelete && <Text style={styles.deleteText}>DELETE</Text>}
+      </View>
 
       <PanGestureHandler onGestureEvent={handleGesture}>
-          <Animated.View
-            style={[
-              styles.cardContainer,
-              { transform: [{ translateX }] },
-            ]}
-          >
-            <View>
-              <Text style={styles.title}>{title}</Text>
-              <Text style={styles.description}>{description}</Text>
-            </View>
+        <Animated.View
+          style={[
+            styles.cardContainer,
+            { transform: [{ translateX }] },
+          ]}
+        >
+          <TouchableWithoutFeedback onPress={()=>onCardPress({ id, title, description, showDelete})}>
+            <View style={[styles.cardContent, showDelete && styles.showDeleteBackground]}>
+              <View>
+                <Text style={styles.title}>{title}</Text>
+              </View>
 
-            {/* Circle button */}
-            <TouchableOpacity
-              style={styles.circleButton}
-              onPress={() => {
-                onPinPress({ id, title, description, showDelete, pinned: !pinned})
-              }}
-            >
-              {
-                pinned ?
-                  <View style={{...styles.circle, backgroundColor: "red"}} />     // replace with pinned filled "pin" icon
-                :
-                  <View style={{...styles.circle, backgroundColor: "green"}} />   // replace with unpinned outlined "pin" icon
-              }
-            </TouchableOpacity>
-          </Animated.View>
-        </PanGestureHandler>
+              {/* Circle button */}
+              <TouchableOpacity
+                style={styles.circleButton}
+                onPress={() => {
+                  onPinPress({ id, title, description, showDelete, pinned: !pinned})
+                }}
+              >
+                {
+                  pinned ?
+                    <View style={{...styles.circle, backgroundColor: "red"}} />     // replace with pinned filled "pin" icon
+                  :
+                    <View style={{...styles.circle, backgroundColor: "green"}} />   // replace with unpinned outlined "pin" icon
+                }
+              </TouchableOpacity>
+            </View>    
+          </TouchableWithoutFeedback>
+        </Animated.View>
+      </PanGestureHandler>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'transparent', // Transparent background to allow the red background to show
+    // backgroundColor: 'transparent', // Transparent background to allow the red background to show
     marginBottom: 10,
     margin: 5,
     flex: 1
   },
   cardContainer: {
-    backgroundColor: 'lightgray',
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    // margin: 5,
-    borderRadius: 5,
-    flex: 1,
+    backgroundColor: 'transparent',
+  },
+  cardContent:{
     flexDirection: 'row', // Arrange content horizontally
     justifyContent: 'space-between', // Align content to the ends (left and right)
     alignItems: 'center', // Vertically center-align content
+    backgroundColor: 'lightgray',
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  deleteContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'red',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
   },
   title: {
     fontSize: 16,

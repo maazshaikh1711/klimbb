@@ -68,6 +68,8 @@ const App = () =>{
             const topFetchedNews = 
               newsJsonObject.articles.slice(0, 5).map((obj, index)=>({
                 "id": index+1,
+                "showDelete": true, 
+                "pinned": false,
                 ...obj
 
               })
@@ -160,7 +162,7 @@ const App = () =>{
                 pinned={item.pinned}
                 showDelete={item.showDelete}
                 onSwipe={() => handleCardSwipe(item)}
-                // onCardPress={() => handleCardPress(item)}
+                onCardPress={() => handleCardPress(item)}
                 onPinPress={handlePinToTop} 
                 index={index}
               />
