@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -36,42 +36,68 @@ const App = () =>{
     { id: 5, title: 'Title 5', description: 'Description 5', showDelete: true },
   ]);
 
+  useEffect(()=>{
+    console.log("..................................")
+    console.log("Tile Cardsss: ", tileCard)
+    console.log("..................................")
+  }, [tileCard])
+
   const handleCardPress = (card) => {
     setSelectedCard(card);
     console.log("card pressed : ", card.title)
   };
 
-  const handleCardSwipe = (card) => {
-    console.log("card swiped : ", card.title)
-    // lodash.remove(tileCard, obj => obj.id === card.id)
-    const updatedTileCard = tileCard.map((item) => {
-      if (item.id === card.id) {
-        return { ...item, showDelete: false };
-      }
-      return item;
-    });
-    setTileCard(updatedTileCard);
+  const handleCardSwipe = (swipedCard) => {
+    console.log("card swiped : ", swipedCard.title)    
+
+      setTileCard((prevTileCard) => {
+        const updatedTileCard = prevTileCard
+          .filter((item) => item.id !== swipedCard.id)
+          .map((item) => {
+            if (item.id > swipedCard.id) {
+              return { ...item, id: item.id - 1 };
+            }
+            return item;
+          });
+
+        console.log("After swiping a card: ", updatedTileCard);
+
+        // return updatedTileCard;
+        setTimeout(() => {
+          setTileCard(updatedTileCard);
+        }, 100); // Delay for a short duration to let the animation finish
+      });
+
+      setSelectedCard(null); // Clear the selected card
+      // console.log("New data list after filtering and adjusting id : ", updatedTileCard)
   };
 
   return (
     <GestureHandlerRootView style={styles.container}>
       <View style={styles.container}>
         <Text>Hiiiiiiiiii</Text>
-        <FlatList
-          data={tileCard}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <TileCard
-              key={item.id}
-              id={item.id}
-              title={item.title}
-              description={item.description}
-              showDelete={item.showDelete}
-              onSwipe={() => handleCardSwipe(item)}
-              onPress={() => handleCardPress(item)}
-            />
-          )}
-        />
+        {tileCard?.length > 0 ?
+          <FlatList
+            data={tileCard}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item, index }) => (
+              <TileCard
+                key={item.id}
+                id={item.id}
+                title={item.title}
+                description={item.description}
+                showDelete={item.showDelete}
+                onSwipe={() => handleCardSwipe(item)}
+                onPress={() => handleCardPress(item)}
+                index={index}
+              />
+            )}
+          />
+        :
+          <View style={{alignItems:"center", justifyContent: "center"}}>
+              <Text style={{color:"black"}}>You are all caught up!</Text>
+          </View>
+        }
         {selectedCard && (
           <DetailCard
             title={selectedCard.title}

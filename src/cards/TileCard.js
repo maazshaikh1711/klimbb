@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { PanGestureHandler } from 'react-native-gesture-handler';
+import { PanGestureHandler, TouchableOpacity } from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
   useAnimatedGestureHandler,
@@ -9,6 +9,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 const TileCard = ({ id, title, description, onSwipe, onPress, showDelete }) => {
+  console.log(`Rendering TileCard with ID: ${id}, title: ${title}, showDelete: ${showDelete}` );
   const translateX = useSharedValue(0);
 
   const handleGesture = useAnimatedGestureHandler({
@@ -31,23 +32,25 @@ const TileCard = ({ id, title, description, onSwipe, onPress, showDelete }) => {
   return (
     <View style={styles.container}>
       {/* Red background with "DELETE" text */}
-      {showDelete && (
-        <View style={styles.background}>
-          <Text style={styles.deleteText}>DELETE</Text>
-        </View>
-      )}
+      <TouchableOpacity onPress={()=>onPress({ id, title, description})}>
+        {showDelete && (
+          <View style={styles.background}>
+            <Text style={styles.deleteText}>DELETE</Text>
+          </View>
+        )}
 
-      <PanGestureHandler onGestureEvent={handleGesture}>
-        <Animated.View
-          style={[
-            styles.cardContainer,
-            { transform: [{ translateX }] },
-          ]}
-        >
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.description}>{description}</Text>
-        </Animated.View>
-      </PanGestureHandler>
+        <PanGestureHandler onGestureEvent={handleGesture}>
+          <Animated.View
+            style={[
+              styles.cardContainer,
+              { transform: [{ translateX }] },
+            ]}
+          >
+            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.description}>{description}</Text>
+          </Animated.View>
+        </PanGestureHandler>
+      </TouchableOpacity>
     </View>
   );
 };
