@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
+  ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   useColorScheme,
@@ -12,18 +14,14 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 //local imports
-import DetailCard from './src/cards/DetailCard';
 import TileCard from './src/cards/TileCard';
+import DetailCard from './src/cards/DetailCard';
+import { setData, getData, resetOfflineData } from './src/offlineDataStorage';
 
 //third party imports
 const lodash = require('lodash');
 import debounce from 'lodash/debounce';
 import { GestureHandlerRootView, TouchableOpacity } from 'react-native-gesture-handler';
-
-import { config } from 'dotenv';
-// Load environment variables from .env file
-// config();
-//const apiKey = process.env.NEW_API_kEY;
 
 const refreshTileCard = [
   { id: 1, title: 'Title 1', description: 'Description 1', showDelete: true, pinned: false },
@@ -33,40 +31,82 @@ const refreshTileCard = [
   { id: 5, title: 'Title 5', description: 'Description 5', showDelete: true, pinned: false },
 ]
 
+const noOfCardsToDisplay = 3;
+
 const App = () =>{
   const isDarkMode = useColorScheme() === 'dark';
-
+  
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
-
+  
   const [selectedCard, setSelectedCard] = useState(false);
-
+  
   const [tileCard, setTileCard] = useState([
     // { id: 1, title: 'Title 1', description: 'Description 1', showDelete: true, pinned: false },
     // { id: 2, title: 'Title 2', description: 'Description 2', showDelete: true, pinned: false },
     // { id: 3, title: 'Title 3', description: 'Description 3', showDelete: true, pinned: false },
     // { id: 4, title: 'Title 4', description: 'Description 4', showDelete: true, pinned: false },
     // { id: 5, title: 'Title 5', description: 'Description 5', showDelete: true, pinned: false },
+    // ... more tiles
   ]);
 
   useEffect(()=>{
+    // console.log("Card list modified: ", tileCard)
   }, [tileCard])
 
   useEffect(()=>{
-    console.log("Fetching news")
-    fetchTopNews()
+    fetchData();
   }, [])
+
+  const fetchData = async () => {
+    console.log("Trying to fetch data..................")
+    const offlineData = await getData('klimbClubNews');
+
+    if ( offlineData === null) {
+      console.log("No news present in offline db, fetching news API 1")
+      await fetchTopNews();
+    }
+    else{
+      console.log("============================================================")
+      console.log("News is present/fetched in offline db, setting top 10 news")
+
+      // cut upto 10 (could be less than 10, if fetched list is about to finish) objects to display
+      let newNews = null;
+      let newTenNews = null;
+      if (offlineData === null){
+        newNews = await getData('klimbClubNews');
+        newTenNews = newNews.slice(0,noOfCardsToDisplay);
+      }
+      else{
+        newTenNews = offlineData.slice(0,noOfCardsToDisplay);
+      }
+      console.log("Setting new news tiles as:", newTenNews);
+      setTileCard(newTenNews);
+      // console.log("===============================>", newTenNews)
+
+      // if that array length is >10, re-assign the remaining array to that key
+      if (offlineData?.length > noOfCardsToDisplay){
+        // re-assign the remaining array to that key
+        setData(JSON.stringify(offlineData.slice(noOfCardsToDisplay)))
+      }
+      else{
+        // call fetchTopNews(), to get new top 100 news
+        fetchTopNews();
+      }
+    }
+  };
 
   const fetchTopNews = async () => {
     try {
       const newsJsonObject = await FetchNews("https://newsapi.org/v2/top-headlines?country=in&apiKey=");      //later move URL to .env file
-
+      
       if(newsJsonObject?.status){
         if (newsJsonObject.status == "ok"){
           if(newsJsonObject.articles.length>0){
-            const topFetchedNews = 
-              newsJsonObject.articles.slice(0, 5).map((obj, index)=>({
+
+            const topFetchedNewsToStore = 
+              newsJsonObject.articles.slice(0, 100).map((obj, index)=>({
                 "id": index+1,
                 "showDelete": true, 
                 "pinned": false,
@@ -74,8 +114,14 @@ const App = () =>{
 
               })
             )
-            console.log("Setting new news in a list",topFetchedNews)
-            setTileCard(topFetchedNews)
+            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+
+            console.log("Setting new news tiles as:", topFetchedNewsToStore.slice(0,noOfCardsToDisplay));
+            setTileCard(topFetchedNewsToStore.slice(0,noOfCardsToDisplay));
+
+            console.log("Storing new news in offline db", topFetchedNewsToStore.slice(noOfCardsToDisplay))
+            await setData(JSON.stringify(topFetchedNewsToStore.slice(noOfCardsToDisplay)), 'klimbClubNews');
+
           }
         }
         else{
@@ -105,7 +151,7 @@ const App = () =>{
 
   const handleCardPress = (card) => {
     setSelectedCard(card);
-    console.log("Card list modified: ", card)
+    console.log("Card pressed : ", card)
   };
 
   const toggleModal = () => {
@@ -118,7 +164,7 @@ const App = () =>{
     const debounceSetTileCard = debounce((updatedTileCard) => {
       setTileCard(updatedTileCard);
     }, 100); // Debounce for 100 milliseconds
-
+  
       setTileCard((prevTileCard) => {
         const updatedTileCard = prevTileCard
           .filter((item) => item.id !== swipedCard.id)
@@ -128,20 +174,22 @@ const App = () =>{
             }
             return item;
           });
-
-        console.log("After swiping a card: ", updatedTileCard);
-
+    
+        // console.log("After swiping a card: ", updatedTileCard);
+        
         // Use the debounced function to update the state
         debounceSetTileCard(updatedTileCard);
       });
-
+      
       setSelectedCard(null); // Clear the selected card
       // console.log("New data list after filtering and adjusting id : ", updatedTileCard)
   };
 
   const handlePinToTop = (card) => {
+
     setTileCard((prevTileCard) => {
       const updatedTileCard = prevTileCard.filter((item) => item.id !== card.id);
+
       if(card.pinned === true) {
         return [card, ...updatedTileCard]     // when pinned, card is shifted to top
       } else {
@@ -168,32 +216,42 @@ const App = () =>{
                 showDelete={item.showDelete}
                 onSwipe={() => handleCardSwipe(item)}
                 onCardPress={() => handleCardPress(item)}
-                onPinPress={handlePinToTop} 
+                onPinPress={handlePinToTop}
                 index={index}
               />
             )}
           />
         :
           <View style={{alignItems:"center", justifyContent: "center"}}>
-            {/* <Text style={{color:"black"}}>You are all caught up!</Text> */}
-            {/* Call API to fetch new top 100 headlines */}
-          </View>
-        }
-        
-        {
-          selectedCard 
-          && 
-          <DetailCard
-            title={selectedCard.title}
-            description={selectedCard.description}
-            photoUrl={selectedCard.photoUrl}
-            visible={selectedCard?true:false}
-            onClose={toggleModal}
-          />
-        }
+              {/* <Text style={{color:"black"}}>You are all caught up!</Text> */}
+              {/* Call API to fetch new top 100 headlines */}
+          </View>}
 
-        <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "green", borderWidth: 1, height: 75}} onPress={()=>fetchTopNews()}>
+          {
+            selectedCard 
+            &&
+            <DetailCard
+              title={selectedCard.title}
+              description={selectedCard.description}
+              photoUrl={selectedCard.photoUrl}
+              visible={selectedCard?true:false}
+              onClose={toggleModal}
+            />
+          }
+
+        <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "green", borderWidth: 1, height: 50}} onPress={()=>fetchData()}>
           <Text style={{color: "white", fontWeight:"bold"}}>REFRESH</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "orange", borderWidth: 1, height: 50}} onPress={()=>getData('klimbClubNews')}>
+          <Text style={{color: "white", fontWeight:"bold"}}>FETCH LOCAL DATA</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "red", borderWidth: 1, height: 50}} onPress={()=>{
+          resetOfflineData();
+          setTileCard(false);
+          }}>
+          <Text style={{color: "white", fontWeight:"bold"}}>RESET</Text>
         </TouchableOpacity>
       </View>
     </GestureHandlerRootView>
