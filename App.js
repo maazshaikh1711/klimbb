@@ -34,7 +34,7 @@ const refreshTileCard = [
   { id: 5, title: 'Title 5', description: 'Description 5', showDelete: true, pinned: false },
 ]
 
-const noOfCardsToDisplay = 3;
+const noOfCardsToDisplay = 5;
 let dripTimer = 10000;
 
 const App = () =>{
@@ -234,6 +234,15 @@ const App = () =>{
     });
   };
 
+  //try to display by combining both tiles
+  // const combinedTileData = [...pinnedTileCard, ...tileCard];
+  // const sortedTileData = combinedTileData.sort((a, b) => {
+  //   // You can adjust the sorting logic here
+  //   if (a?.pinned && !b?.pinned) return -1; // Pinned tiles come first
+  //   if (!a?.pinned && b?.pinned) return 1;
+  //   return a.id - b.id; // Otherwise, sort by ID
+  // });
+
   return (
     <GestureHandlerRootView style={styles.container}>
       <StatusBar
@@ -242,13 +251,14 @@ const App = () =>{
         // hidden={hidden}
       />
       <Header AppName={'KC NEWS'} onRefreshPress={()=>fetchData()}/>
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         
         {/* Display Pinned News Tiles */}
         <View>
           <FlatList
             data={pinnedTileCard}
             keyExtractor={(item) => item.id.toString()}
+            style={{ flexGrow: 1 }}
             renderItem={({ item, index }) => (
               <TileCard
                 key={item.id}
@@ -272,6 +282,7 @@ const App = () =>{
           <FlatList
             data={tileCard}
             keyExtractor={(item) => item.id.toString()}
+            style={{ flexGrow: 1 }}
             renderItem={({ item, index }) => (
               <TileCard
                 key={item.id}
@@ -290,6 +301,18 @@ const App = () =>{
           />
         </View>
 
+        {
+            selectedCard 
+            &&
+            <DetailCard
+              title={selectedCard.title}
+              description={selectedCard.description}
+              photoUrl={selectedCard.photoUrl}
+              visible={selectedCard?true:false}
+              onClose={toggleModal}
+            />
+        }
+
         {/* <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "orange", borderWidth: 1, height: 50}} onPress={()=>getData('klimbClubNews')}>
           <Text style={{color: "white", fontWeight:"bold"}}>CONSOLE LOCAL NEWS</Text>
         </TouchableOpacity>
@@ -300,7 +323,7 @@ const App = () =>{
           }}>
           <Text style={{color: "white", fontWeight:"bold"}}>RESET LOCAL NEWS</Text>
         </TouchableOpacity> */}
-      </View>
+      </ScrollView>
     </GestureHandlerRootView>
   );    
 }
