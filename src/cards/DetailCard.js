@@ -15,7 +15,7 @@ const DetailCard = ({ title, description, photoUrl, visible, onClose }) => {
       <View style={styles.modalContainer}>
         <TouchableOpacity style={styles.backButton} onPress={onClose}>
           <View style={styles.backButtonDesign}>
-            <Text style={{fontSize: 16}}>{'< Back'}</Text>
+            <Text style={{fontSize: 16, color:"white"}}>{'< Back'}</Text>
           </View>
         </TouchableOpacity>
     
@@ -23,7 +23,7 @@ const DetailCard = ({ title, description, photoUrl, visible, onClose }) => {
             {/* Photo */}
             <View style={styles.photoContainer}>
               {/* <Image source={{ uri: photoUrl }} style={styles.photo} /> */}
-              <Text>PHOTO</Text>
+              <Text style={{color: "#666666"}}>PHOTO</Text>
             </View>
 
             <View style={styles.newsContainer}>
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   backButtonDesign: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'lightgrey',
+    backgroundColor: '#666666',
     paddingVertical: 5,
     paddingHorizontal: 5,
     borderRadius: 5
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   },
   photoContainer: {
     flex: 1,
-    // backgroundColor: "yellow",
+    backgroundColor: "#242424",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   newsContainer: {
     flex: 3,
     padding: 15,
-    backgroundColor:"lightgrey",
+    backgroundColor:"#666666",
   },
   titleContainer:{
     // backgroundColor: "blue",
@@ -95,7 +95,8 @@ const styles = StyleSheet.create({
   },
   titleText:{
     fontSize: 20,
-    fontWeight: "bold"
+    fontWeight: "bold",
+    color:"white"
   },
   descriptionContainer:{
     flex: 1,
@@ -103,6 +104,7 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     fontSize: 16,
+    color:"lightgrey"
   },
 });
 

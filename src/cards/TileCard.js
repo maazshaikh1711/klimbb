@@ -27,7 +27,7 @@ const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinP
           translateX.value = withSpring(-400); // Swipe fully left
           runOnJS(onSwipe)(id);
         } else {
-          translateX.value = withSpring(0); // Reset position for pinned cards
+          translateX.value = withSpring(0); // Reset position
         }
       } else {
         translateX.value = withSpring(0); // Reset position for pinned cards
@@ -42,68 +42,68 @@ const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinP
         {showDelete && <Text style={styles.deleteText}>DELETE</Text>}
       </View>
 
-      <PanGestureHandler onGestureEvent={handleGesture}>
-        <Animated.View
-          style={[
-            styles.cardContainer,
-            { transform: [{ translateX }] },
-          ]}
-        >
-          <TouchableWithoutFeedback onPress={()=>onCardPress({ id, title, description, photoUrl, showDelete})}>
-            <View style={[styles.cardContent, showDelete && styles.showDeleteBackground]}>
-              <View style={styles.titleContainer}>
-                <Text style={styles.title}>{title}</Text>
-              </View>
+        <PanGestureHandler onGestureEvent={handleGesture}>
+          <Animated.View
+            style={[
+              styles.cardContainer,
+              { transform: [{ translateX }] },
+            ]}
+          >
+            <TouchableWithoutFeedback onPress={()=>onCardPress({ id, title, description, photoUrl, showDelete})}>
+              <View style={[styles.cardContent, showDelete && styles.showDeleteBackground]}>
+                <View style={styles.titleContainer}>
+                  <Text style={styles.title}>{title}</Text>
+                </View>
 
-              {/* Circle button */}
-              <View style={styles.circleButtonContainer} pointerEvents="box-none">
-                <TouchableWithoutFeedback
-                  style={styles.circleButton}
-                  onPress={() => {
-                    onPinPress({ id, title, description, showDelete, pinned: !pinned})
-                  }}
-                >
-                  {
-                    pinned ?
-                      <View style={{...styles.circle, backgroundColor: "red"}}>     
-                        {/* replace with pinned filled "pin" icon */}
-                        <Text>Unpin</Text>
-                      </View>
-                    :
-                      <View style={{...styles.circle, backgroundColor: "green"}}>
-                        {/* replace with unpinned outlined "pin" icon */}
-                        <Text>Pin</Text>
-                      </View>
-                  }
-                </TouchableWithoutFeedback>
-              </View>
-            </View>    
-          </TouchableWithoutFeedback>
-        </Animated.View>
-      </PanGestureHandler>
+                {/* Circle button */}
+                <View style={styles.circleButtonContainer} pointerEvents="box-none">
+                  <TouchableWithoutFeedback 
+                    onPress={() => {
+                      onPinPress({ id, title, description, showDelete, pinned: !pinned})
+                    }}
+                  >
+                    <View style={styles.circleButton}>
+                      {
+                        pinned ?
+                          <View style={{...styles.circle, backgroundColor: "darkred"}}>     
+                            {/* replace with pinned filled "pin" icon */}
+                            <Text>Unpin</Text>
+                          </View>
+                        :
+                          <View style={{...styles.circle, backgroundColor: "green"}}>
+                          {/* replace with unpinned outlined "pin" icon */}
+                          <Text>Pin</Text>
+                          </View>
+                      }
+                    </View>
+                  </TouchableWithoutFeedback>
+                </View>
+              </View>    
+            </TouchableWithoutFeedback>
+          </Animated.View>
+        </PanGestureHandler>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // backgroundColor: 'transparent', // Transparent background to allow the red background to show
+    marginBottom: 10,
     margin: 5,
+    flex: 1
   },
   cardContainer: {
-    backgroundColor: 'transparent',
+    backgroundColor: 'transparent', // Transparent background to allow the red background to show
   },
-  cardContent:{
-    flexDirection: 'row', // Arrange content horizontally
-    justifyContent: 'space-between', // Align content to the ends (left and right)
-    alignItems: 'center', // Vertically center-align content
-    backgroundColor: 'lightgray',
+  cardContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#666666',
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderRadius: 5,
-  },
-  titleContainer: {
-    flex: 0.85, // 85 % width
   },
   deleteContainer: {
     position: 'absolute',
@@ -111,14 +111,18 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'red',
+    backgroundColor: 'darkred',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
   },
+  titleContainer: {
+    flex: 0.85, // 85 % width
+  },
   title: {
     fontSize: 16,
     marginBottom: 5,
+    color: 'white',
   },
   circleButtonContainer: {
     flex: 0.15, // 15% width
@@ -129,6 +133,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'flex-end',
+    zIndex: 1
     // backgroundColor: "black",
   },
   circle: {
@@ -153,7 +158,7 @@ const styles = StyleSheet.create({
   deleteText: {
     color: 'white',
     fontSize: 16,
-  },
+  }
 });
 
 export default TileCard;

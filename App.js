@@ -14,6 +14,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 //local imports
+import Header from './src/Header';
 import TileCard from './src/cards/TileCard';
 import DetailCard from './src/cards/DetailCard';
 import { setData, getData, resetOfflineData } from './src/offlineDataStorage';
@@ -223,6 +224,12 @@ const App = () =>{
 
   return (
     <GestureHandlerRootView style={styles.container}>
+      <StatusBar
+        animated={true}
+        backgroundColor="#666666"
+        // hidden={hidden}
+      />
+      <Header AppName={'KC NEWS'} onRefreshPress={()=>fetchData()}/>
       <View style={styles.container}>
         {tileCard?.length > 0 ?
           <FlatList
@@ -262,20 +269,20 @@ const App = () =>{
             />
           }
 
-        <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "green", borderWidth: 1, height: 50}} onPress={()=>startFetchDataInterval()}>
+        {/* <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "green", borderWidth: 1, height: 50}} onPress={()=>fetchData()}>
           <Text style={{color: "white", fontWeight:"bold"}}>REFRESH</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
-        <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "orange", borderWidth: 1, height: 50}} onPress={()=>getData('klimbClubNews')}>
-          <Text style={{color: "white", fontWeight:"bold"}}>FETCH LOCAL DATA</Text>
+        {/* <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "orange", borderWidth: 1, height: 50}} onPress={()=>getData('klimbClubNews')}>
+          <Text style={{color: "white", fontWeight:"bold"}}>CONSOLE LOCAL NEWS</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "red", borderWidth: 1, height: 50}} onPress={()=>{
           resetOfflineData();
           setTileCard(false);
           }}>
-          <Text style={{color: "white", fontWeight:"bold"}}>RESET</Text>
-        </TouchableOpacity>
+          <Text style={{color: "white", fontWeight:"bold"}}>RESET LOCAL NEWS</Text>
+        </TouchableOpacity> */}
       </View>
     </GestureHandlerRootView>
   );    
@@ -285,6 +292,7 @@ const styles = StyleSheet.create({
   container:{
     flex: 1,
     margin: '10px 5px 10px 5px',
+    backgroundColor:"#242424",
   }
 });
 
