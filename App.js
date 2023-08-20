@@ -23,6 +23,8 @@ import { setData, getData, resetOfflineData } from './src/offlineDataStorage';
 const lodash = require('lodash');
 import debounce from 'lodash/debounce';
 import { GestureHandlerRootView, TouchableOpacity } from 'react-native-gesture-handler';
+// import Config from 'react-native-config'
+
 
 const refreshTileCard = [
   { id: 1, title: 'Title 1', description: 'Description 1', showDelete: true, pinned: false },
@@ -36,8 +38,8 @@ const noOfCardsToDisplay = 3;
 let dripTimer = 10000;
 
 const App = () =>{
+
   const isDarkMode = useColorScheme() === 'dark';
-  
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
@@ -45,14 +47,15 @@ const App = () =>{
   const [selectedCard, setSelectedCard] = useState(false);
   const [fetchDataInterval, setFetchDataInterval] = useState(null);
   
-  const [tileCard, setTileCard] = useState([
+  const [tileCard, setTileCard] = useState([]);
     // { id: 1, title: 'Title 1', description: 'Description 1', showDelete: true, pinned: false },
     // { id: 2, title: 'Title 2', description: 'Description 2', showDelete: true, pinned: false },
     // { id: 3, title: 'Title 3', description: 'Description 3', showDelete: true, pinned: false },
     // { id: 4, title: 'Title 4', description: 'Description 4', showDelete: true, pinned: false },
     // { id: 5, title: 'Title 5', description: 'Description 5', showDelete: true, pinned: false },
     // ... more tiles
-  ]);
+  
+  const [pinnedTileCard, setPinnedTileCard] = useState([]);
 
   useEffect(()=>{
     // console.log("Card list modified: ", tileCard)
@@ -211,11 +214,20 @@ const App = () =>{
 
   const handlePinToTop = (card) => {
 
+    setPinnedTileCard((prevTileCard) => {
+      const updatedTileCard = prevTileCard.filter((item) => item.id !== card.id);
+      if (card.pinned === true){
+        return [card, ...updatedTileCard];
+      } else {
+        return updatedTileCard;
+      }
+    })
+
     setTileCard((prevTileCard) => {
       const updatedTileCard = prevTileCard.filter((item) => item.id !== card.id);
 
       if(card.pinned === true) {
-        return [card, ...updatedTileCard]     // when pinned, card is shifted to top
+        return updatedTileCard     // when pinned, card is shifted to top
       } else {
         return [...updatedTileCard, card]     // when unpinned, card is shifted to bottom
       } ;
@@ -231,7 +243,32 @@ const App = () =>{
       />
       <Header AppName={'KC NEWS'} onRefreshPress={()=>fetchData()}/>
       <View style={styles.container}>
-        {tileCard?.length > 0 ?
+        
+        {/* Display Pinned News Tiles */}
+        <View>
+          <FlatList
+            data={pinnedTileCard}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item, index }) => (
+              <TileCard
+                key={item.id}
+                id={item.id}
+                title={item.title}
+                description={item.description}
+                photoUrl={item.urlToImage}
+                pinned={item.pinned}
+                showDelete={item.showDelete}
+                onSwipe={() => handleCardSwipe(item)}
+                onCardPress={() => handleCardPress(item)}
+                onPinPress={handlePinToTop}
+                index={index}
+              />
+            )}
+          />
+        </View>
+
+        {/* Display Unpinned News Tiles */}
+        <View>
           <FlatList
             data={tileCard}
             keyExtractor={(item) => item.id.toString()}
@@ -251,27 +288,7 @@ const App = () =>{
               />
             )}
           />
-        :
-          <View style={{alignItems:"center", justifyContent: "center"}}>
-              {/* <Text style={{color:"black"}}>You are all caught up!</Text> */}
-              {/* Call API to fetch new top 100 headlines */}
-          </View>}
-
-          {
-            selectedCard 
-            &&
-            <DetailCard
-              title={selectedCard.title}
-              description={selectedCard.description}
-              photoUrl={selectedCard.photoUrl}
-              visible={selectedCard?true:false}
-              onClose={toggleModal}
-            />
-          }
-
-        {/* <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "green", borderWidth: 1, height: 50}} onPress={()=>fetchData()}>
-          <Text style={{color: "white", fontWeight:"bold"}}>REFRESH</Text>
-        </TouchableOpacity> */}
+        </View>
 
         {/* <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "orange", borderWidth: 1, height: 50}} onPress={()=>getData('klimbClubNews')}>
           <Text style={{color: "white", fontWeight:"bold"}}>CONSOLE LOCAL NEWS</Text>
