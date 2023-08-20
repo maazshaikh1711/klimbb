@@ -18,7 +18,11 @@ const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinP
     },
     onActive: (event, ctx) => {
       if (!pinned) {
-        translateX.value = ctx.startX + event.translationX;
+        //only allow to swipe left
+        if (event.translationX < 0) {
+          // Only update translateX for leftward swipes
+          translateX.value = ctx.startX + event.translationX;
+        }
       }
     },
     onEnd: (event) => {
