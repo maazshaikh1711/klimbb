@@ -32,6 +32,7 @@ const refreshTileCard = [
 ]
 
 const noOfCardsToDisplay = 3;
+let dripTimer = 10000;
 
 const App = () =>{
   const isDarkMode = useColorScheme() === 'dark';
@@ -41,6 +42,7 @@ const App = () =>{
   };
   
   const [selectedCard, setSelectedCard] = useState(false);
+  const [fetchDataInterval, setFetchDataInterval] = useState(null);
   
   const [tileCard, setTileCard] = useState([
     // { id: 1, title: 'Title 1', description: 'Description 1', showDelete: true, pinned: false },
@@ -56,8 +58,29 @@ const App = () =>{
   }, [tileCard])
 
   useEffect(()=>{
-    fetchData();
+    const initializeData = async () => {
+      await startFetchDataInterval(); // Start the interval and await its completion
+    };
+  
+    initializeData();
   }, [])
+
+  const startFetchDataInterval = async () => {
+    clearInterval(fetchDataInterval); // Clear existing interval
+    await fetchData(); // Fetch data immediately
+
+    // Set up a new interval to call fetchData every X milliseconds
+    const intervalId = setInterval(async() => {
+      await fetchData();
+    }, dripTimer);
+    setFetchDataInterval(intervalId);
+
+    // Clean up the interval when the component unmounts
+    return () => {
+      clearInterval(fetchDataInterval);
+    };
+    
+  };
 
   const fetchData = async () => {
     console.log("Trying to fetch data..................")
@@ -239,7 +262,7 @@ const App = () =>{
             />
           }
 
-        <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "green", borderWidth: 1, height: 50}} onPress={()=>fetchData()}>
+        <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "green", borderWidth: 1, height: 50}} onPress={()=>startFetchDataInterval()}>
           <Text style={{color: "white", fontWeight:"bold"}}>REFRESH</Text>
         </TouchableOpacity>
 
