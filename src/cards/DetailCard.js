@@ -22,7 +22,20 @@ const DetailCard = ({ title, description, photoUrl, visible, onClose }) => {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             {/* Photo */}
             <View style={styles.photoContainer}>
-              <Image source={{ uri: photoUrl }} style={styles.photo} />
+              {
+                photoUrl?
+                  <Image 
+                    source={{ uri: photoUrl }} 
+                    style={styles.photo} 
+                    resizeMode='cover'
+                  />
+                :
+                  <Image 
+                    source={require('../assets/defaultImage.jpg')} 
+                    style={styles.photo} 
+                    resizeMode='cover'
+                  />
+              }
               {/* <Text style={{color: "#BB86FC"}}>PHOTO</Text> */}
             </View>
 

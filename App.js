@@ -327,7 +327,7 @@ const App = () =>{
                 <DetailCard
                   title={selectedCard.title}
                   description={selectedCard.description}
-                  photoUrl={selectedCard.photoUrl}
+                  photoUrl={selectedCard.urlToImage}
                   visible={selectedCard?true:false}
                   onClose={toggleModal}
                 />
