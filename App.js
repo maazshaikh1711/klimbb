@@ -19,6 +19,7 @@ import TileCard from './src/cards/TileCard';
 import DetailCard from './src/cards/DetailCard';
 import { setData, getData, resetOfflineData } from './src/offlineDataStorage';
 import ModalDripTimer from './src/ModalDripTimer';
+import SplashScreen from './src/SplashScreen';
 
 //third party imports
 const lodash = require('lodash');
@@ -47,8 +48,9 @@ const App = () =>{
   const [selectedCard, setSelectedCard] = useState(false);
   const [fetchDataInterval, setFetchDataInterval] = useState(null);
   const [dripTimerModal, setDripTimerModal] = useState(false);
-  const [dripTime, setDripTime] = useState(10000);
   const [tileCard, setTileCard] = useState([]);
+  const [showSplashScreen, setShowSplashScreen] = useState(true);
+  const [pinnedTileCard, setPinnedTileCard] = useState([]);
     // { id: 1, title: 'Title 1', description: 'Description 1', showDelete: true, pinned: false },
     // { id: 2, title: 'Title 2', description: 'Description 2', showDelete: true, pinned: false },
     // { id: 3, title: 'Title 3', description: 'Description 3', showDelete: true, pinned: false },
@@ -56,16 +58,19 @@ const App = () =>{
     // { id: 5, title: 'Title 5', description: 'Description 5', showDelete: true, pinned: false },
     // ... more tiles
   
-  const [pinnedTileCard, setPinnedTileCard] = useState([]);
 
-  useEffect(()=>{
+  // useEffect(()=>{
     // console.log("Card list modified: ", tileCard)
-  }, [tileCard])
+  // }, [tileCard])
 
   useEffect(()=>{
     const initializeData = async () => {
       await startFetchDataInterval(); // Start the interval and await its completion
     };
+
+    setTimeout(() => {
+      setShowSplashScreen(false);
+    }, 2000);
   
     initializeData();
   }, [])
@@ -240,7 +245,6 @@ const App = () =>{
   }
 
   const setDripTimer = (value) => {
-    setDripTime(value);
     startFetchDataInterval(value)
     toggleDripTimerModal();
   }
@@ -255,97 +259,102 @@ const App = () =>{
   // });
 
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <StatusBar
-        animated={true}
-        backgroundColor="#666666"
-        // hidden={hidden}
-      />
-      <Header AppName={'KC NEWS'} onRefreshPress={()=>fetchData()} onDripTimerPress={()=>toggleDripTimerModal()}/>
-      <ScrollView style={styles.container}>
-        
-        {/* Display Pinned News Tiles */}
-        <View>
-          <FlatList
-            data={pinnedTileCard}
-            keyExtractor={(item) => item.id.toString()}
-            style={{ flexGrow: 1 }}
-            renderItem={({ item, index }) => (
-              <TileCard
-                key={item.id}
-                id={item.id}
-                title={item.title}
-                description={item.description}
-                photoUrl={item.urlToImage}
-                pinned={item.pinned}
-                showDelete={item.showDelete}
-                onSwipe={() => handleCardSwipe(item)}
-                onCardPress={() => handleCardPress(item)}
-                onPinPress={handlePinToTop}
-                index={index}
-              />
-            )}
-          />
+      showSplashScreen === true ?
+        <View style={{flex:1}}>
+          <SplashScreen/>
         </View>
-
-        {/* Display Unpinned News Tiles */}
-        <View>
-          <FlatList
-            data={tileCard}
-            keyExtractor={(item) => item.id.toString()}
-            style={{ flexGrow: 1 }}
-            renderItem={({ item, index }) => (
-              <TileCard
-                key={item.id}
-                id={item.id}
-                title={item.title}
-                description={item.description}
-                photoUrl={item.urlToImage}
-                pinned={item.pinned}
-                showDelete={item.showDelete}
-                onSwipe={() => handleCardSwipe(item)}
-                onCardPress={() => handleCardPress(item)}
-                onPinPress={handlePinToTop}
-                index={index}
+      :
+        <GestureHandlerRootView style={styles.container}>
+          <StatusBar
+            animated={true}
+            backgroundColor="#666666"
+            // hidden={hidden}
+          />
+          <Header AppName={'KC NEWS'} onRefreshPress={()=>fetchData()} onDripTimerPress={()=>toggleDripTimerModal()}/>
+          <ScrollView style={styles.container}>
+            
+            {/* Display Pinned News Tiles */}
+            <View>
+              <FlatList
+                data={pinnedTileCard}
+                keyExtractor={(item) => item.id.toString()}
+                style={{ flexGrow: 1 }}
+                renderItem={({ item, index }) => (
+                  <TileCard
+                    key={item.id}
+                    id={item.id}
+                    title={item.title}
+                    description={item.description}
+                    photoUrl={item.urlToImage}
+                    pinned={item.pinned}
+                    showDelete={item.showDelete}
+                    onSwipe={() => handleCardSwipe(item)}
+                    onCardPress={() => handleCardPress(item)}
+                    onPinPress={handlePinToTop}
+                    index={index}
+                  />
+                )}
               />
-            )}
-          />
-        </View>
+            </View>
 
-        {
-            selectedCard 
-            &&
-            <DetailCard
-              title={selectedCard.title}
-              description={selectedCard.description}
-              photoUrl={selectedCard.photoUrl}
-              visible={selectedCard?true:false}
-              onClose={toggleModal}
-            />
-        }
+            {/* Display Unpinned News Tiles */}
+            <View>
+              <FlatList
+                data={tileCard}
+                keyExtractor={(item) => item.id.toString()}
+                style={{ flexGrow: 1 }}
+                renderItem={({ item, index }) => (
+                  <TileCard
+                    key={item.id}
+                    id={item.id}
+                    title={item.title}
+                    description={item.description}
+                    photoUrl={item.urlToImage}
+                    pinned={item.pinned}
+                    showDelete={item.showDelete}
+                    onSwipe={() => handleCardSwipe(item)}
+                    onCardPress={() => handleCardPress(item)}
+                    onPinPress={handlePinToTop}
+                    index={index}
+                  />
+                )}
+              />
+            </View>
 
-        {
-          dripTimerModal
-          &&
-          <ModalDripTimer 
-            toggleDripTimerModal={toggleDripTimerModal} 
-            setDripTimer={setDripTimer}
-            visible={dripTimerModal}
-          />
-        }
+            {
+                selectedCard 
+                &&
+                <DetailCard
+                  title={selectedCard.title}
+                  description={selectedCard.description}
+                  photoUrl={selectedCard.photoUrl}
+                  visible={selectedCard?true:false}
+                  onClose={toggleModal}
+                />
+            }
 
-        {/* <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "orange", borderWidth: 1, height: 50}} onPress={()=>getData('klimbClubNews')}>
-          <Text style={{color: "white", fontWeight:"bold"}}>CONSOLE LOCAL NEWS</Text>
-        </TouchableOpacity>
+            {
+              dripTimerModal
+              &&
+              <ModalDripTimer 
+                toggleDripTimerModal={toggleDripTimerModal} 
+                setDripTimer={setDripTimer}
+                visible={dripTimerModal}
+              />
+            }
 
-        <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "red", borderWidth: 1, height: 50}} onPress={()=>{
-          resetOfflineData();
-          setTileCard(false);
-          }}>
-          <Text style={{color: "white", fontWeight:"bold"}}>RESET LOCAL NEWS</Text>
-        </TouchableOpacity> */}
-      </ScrollView>
-    </GestureHandlerRootView>
+            {/* <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "orange", borderWidth: 1, height: 50}} onPress={()=>getData('klimbClubNews')}>
+              <Text style={{color: "white", fontWeight:"bold"}}>CONSOLE LOCAL NEWS</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "red", borderWidth: 1, height: 50}} onPress={()=>{
+              resetOfflineData();
+              setTileCard(false);
+              }}>
+              <Text style={{color: "white", fontWeight:"bold"}}>RESET LOCAL NEWS</Text>
+            </TouchableOpacity> */}
+          </ScrollView>
+        </GestureHandlerRootView>
   );    
 }
 
