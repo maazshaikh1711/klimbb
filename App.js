@@ -7,6 +7,7 @@ import {
   useColorScheme,
   View,
   FlatList,
+  SectionList,
 } from 'react-native';
 
 import {
@@ -250,6 +251,18 @@ const App = () =>{
     toggleDripTimerModal();
   }
 
+  // combining pinned and unpinned news list to display as one list
+  const allNewsToDisplay = [
+    { 
+      title:"pinned",
+      data: pinnedTileCard?[...pinnedTileCard]:[]
+    },
+    { 
+      title:"unpinned",
+      data:tileCard?[...tileCard]:[]
+    }
+  ];
+
   return (
       showSplashScreen === true ?
         <View style={{flex:1}}>
@@ -264,92 +277,53 @@ const App = () =>{
           />
           {/* Header */}
           <Header AppName={'KC NEWS'} onRefreshPress={()=>fetchData()} onDripTimerPress={()=>toggleDripTimerModal()}/>
-          <ScrollView style={styles.container}>
-            
-            {/* Display Pinned News Tiles */}
-            <View>
-              <FlatList
-                data={pinnedTileCard}
-                keyExtractor={(item) => item.id.toString()}
-                style={{ flexGrow: 1 }}
-                renderItem={({ item, index }) => (
-                  <TileCard
-                    key={item.id}
-                    id={item.id}
-                    title={item.title}
-                    description={item.description}
-                    photoUrl={item.urlToImage}
-                    pinned={item.pinned}
-                    showDelete={item.showDelete}
-                    onSwipe={() => handleCardSwipe(item)}
-                    onCardPress={() => handleCardPress(item)}
-                    onPinPress={handlePinToTop}
-                    index={index}
-                  />
-                )}
+
+          {/* Displaying pinned and unpinned list combined as one */}
+          <SectionList
+            sections={allNewsToDisplay}
+            keyExtractor={(item) => `${item.title}-${item.id.toString()}`}
+            style={{ flexGrow: 1 }}
+            // renderSectionHeader={({ section: { title } }) => <Text>{title}</Text>}
+            renderItem={({ item, index }) => (
+              <TileCard
+                key={item.id}
+                id={item.id}
+                title={item.title}
+                description={item.description}
+                photoUrl={item.urlToImage}
+                pinned={item.pinned}
+                showDelete={item.showDelete}
+                onSwipe={() => handleCardSwipe(item)}
+                onCardPress={() => handleCardPress(item)}
+                onPinPress={handlePinToTop}
+                index={index}
               />
-            </View>
+            )}
+          />
 
-            {/* Display Unpinned News Tiles */}
-            <View>
-              <FlatList
-                data={tileCard}
-                keyExtractor={(item) => item.id.toString()}
-                style={{ flexGrow: 1 }}
-                renderItem={({ item, index }) => (
-                  <TileCard
-                    key={item.id}
-                    id={item.id}
-                    title={item.title}
-                    description={item.description}
-                    photoUrl={item.urlToImage}
-                    pinned={item.pinned}
-                    showDelete={item.showDelete}
-                    onSwipe={() => handleCardSwipe(item)}
-                    onCardPress={() => handleCardPress(item)}
-                    onPinPress={handlePinToTop}
-                    index={index}
-                  />
-                )}
-              />
-            </View>
+          {/* Display detailed news when card is selected */}
+          {
+            selectedCard 
+            &&
+            <DetailCard
+              title={selectedCard.title}
+              description={selectedCard.description}
+              photoUrl={selectedCard.urlToImage}
+              visible={selectedCard?true:false}
+              onClose={toggleModal}
+            />
+          }
 
-            {/* Display Detailed news when card is selected */}
-            {
-                selectedCard 
-                &&
-                <DetailCard
-                  title={selectedCard.title}
-                  description={selectedCard.description}
-                  photoUrl={selectedCard.urlToImage}
-                  visible={selectedCard?true:false}
-                  onClose={toggleModal}
-                />
-            }
-
-            {/* Display drip time customization */}
-            {
-              dripTimerModal
-              &&
-              <ModalDripTimer 
-                toggleDripTimerModal={toggleDripTimerModal} 
-                setDripTimer={setDripTimer}
-                visible={dripTimerModal}
-              />
-            }
-
-            {/* Just for debug */}
-            {/* <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "orange", borderWidth: 1, height: 50}} onPress={()=>getData('klimbClubNews')}>
-              <Text style={{color: "white", fontWeight:"bold"}}>CONSOLE LOCAL NEWS</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "red", borderWidth: 1, height: 50}} onPress={()=>{
-              resetOfflineData();
-              setTileCard(false);
-            }}>
-              <Text style={{color: "white", fontWeight:"bold"}}>RESET LOCAL NEWS</Text> 
-            </TouchableOpacity> */}
-          </ScrollView>
+          {/* Display drip timer Modal*/}
+          {
+            dripTimerModal
+            &&
+            <ModalDripTimer 
+              toggleDripTimerModal={toggleDripTimerModal} 
+              setDripTimer={setDripTimer}
+              visible={dripTimerModal}
+            />
+          }
         </GestureHandlerRootView>
   );    
 }
