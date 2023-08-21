@@ -23,7 +23,6 @@ import ModalDripTimer from './src/ModalDripTimer';
 import SplashScreen from './src/SplashScreen';
 
 //third party imports
-const lodash = require('lodash');
 import debounce from 'lodash/debounce';
 import { GestureHandlerRootView, TouchableOpacity } from 'react-native-gesture-handler';
 // import Config from 'react-native-config'
