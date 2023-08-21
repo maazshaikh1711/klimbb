@@ -44,7 +44,11 @@ const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinP
     <View style={styles.container}>
       {/* Red background with "DELETE" text */}
       <View style={styles.deleteContainer}>
-        {showDelete && <Text style={styles.deleteText}>DELETE</Text>}
+        {showDelete && 
+        // <Text style={styles.deleteText}>DELETE</Text>
+          <Icon name="delete" size={30} color="white" />
+        // MaterialIcons
+        }
       </View>
 
         <PanGestureHandler onGestureEvent={handleGesture}>
