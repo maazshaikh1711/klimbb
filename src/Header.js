@@ -1,3 +1,4 @@
+// To display Header for News Tiles List Screen
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -5,11 +6,16 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 const Header = ({AppName, onRefreshPress, onDripTimerPress}) => {
   return (
     <View style={styles.header}>
+      {/* App Name Title */}
       <Text style={styles.appName}>{AppName}</Text>
+      
       <View style={styles.buttonsContainer}>
+        {/* Refresh button */}
         <TouchableOpacity style={styles.button} onPress={onRefreshPress}>
           <Icon name="refresh" size={30} color="#BB86FC" />
         </TouchableOpacity>
+
+        {/* Driptimer button */}
         <TouchableOpacity style={styles.button} onPress={onDripTimerPress}>
           <Icon name="settings-suggest" size={30} color="#BB86FC" />
         </TouchableOpacity>

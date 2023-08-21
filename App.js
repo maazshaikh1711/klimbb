@@ -27,15 +27,6 @@ import debounce from 'lodash/debounce';
 import { GestureHandlerRootView, TouchableOpacity } from 'react-native-gesture-handler';
 // import Config from 'react-native-config'
 
-
-const refreshTileCard = [
-  { id: 1, title: 'Title 1', description: 'Description 1', showDelete: true, pinned: false },
-  { id: 2, title: 'Title 2', description: 'Description 2', showDelete: true, pinned: false },
-  { id: 3, title: 'Title 3', description: 'Description 3', showDelete: true, pinned: false },
-  { id: 4, title: 'Title 4', description: 'Description 4', showDelete: true, pinned: false },
-  { id: 5, title: 'Title 5', description: 'Description 5', showDelete: true, pinned: false },
-]
-
 const noOfCardsToDisplay = 5;
 
 const App = () =>{
@@ -58,11 +49,6 @@ const App = () =>{
     // { id: 5, title: 'Title 5', description: 'Description 5', showDelete: true, pinned: false },
     // ... more tiles
   
-
-  // useEffect(()=>{
-    // console.log("Card list modified: ", tileCard)
-  // }, [tileCard])
-
   useEffect(()=>{
     const initializeData = async () => {
       await startFetchDataInterval(); // Start the interval and await its completion
@@ -97,7 +83,7 @@ const App = () =>{
     const offlineData = await getData('klimbClubNews');
 
     if ( offlineData === null) {
-      console.log("No news present in offline db, fetching news API 1")
+      console.log("No news present in offline db, fetching news API")
       await fetchTopNews();
     }
     else{
@@ -147,13 +133,14 @@ const App = () =>{
 
               })
             )
-            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 
-            console.log("Setting new news tiles as:", topFetchedNewsToStore.slice(0,noOfCardsToDisplay));
+            // News to display
             setTileCard(topFetchedNewsToStore.slice(0,noOfCardsToDisplay));
+            console.log("Setting new news tiles as:", topFetchedNewsToStore.slice(0,noOfCardsToDisplay));
 
-            console.log("Storing new news in offline db", topFetchedNewsToStore.slice(noOfCardsToDisplay))
+            // News to store in offline storage
             await setData(JSON.stringify(topFetchedNewsToStore.slice(noOfCardsToDisplay)), 'klimbClubNews');
+            console.log("Storing new news in offline db", topFetchedNewsToStore.slice(noOfCardsToDisplay))
 
           }
         }
@@ -182,15 +169,18 @@ const App = () =>{
     }
   }
 
+  // When News tile is pressed
   const handleCardPress = (card) => {
     setSelectedCard(card);
     console.log("Card pressed : ", card)
   };
 
+  // To toggle
   const toggleModal = () => {
     setSelectedCard(false);
   };
 
+  // To handle card swipe
   const handleCardSwipe = (swipedCard) => {
     console.log("card swiped : ", swipedCard.title)    
 
@@ -207,9 +197,7 @@ const App = () =>{
             }
             return item;
           });
-    
-        // console.log("After swiping a card: ", updatedTileCard);
-        
+            
         // Use the debounced function to update the state
         debounceSetTileCard(updatedTileCard);
       });
@@ -218,45 +206,49 @@ const App = () =>{
       // console.log("New data list after filtering and adjusting id : ", updatedTileCard)
   };
 
+  // When card is pinned/unpinned
   const handlePinToTop = (card) => {
 
+    // To show pinned tiles
     setPinnedTileCard((prevTileCard) => {
       const updatedTileCard = prevTileCard.filter((item) => item.id !== card.id);
+      
+      // when pinned move to top
       if (card.pinned === true){
         return [card, ...updatedTileCard];
-      } else {
+      } 
+      // when unpinned just delete from pinned array
+      else {
         return updatedTileCard;
       }
     })
 
+    // To show unpinned tiles
     setTileCard((prevTileCard) => {
       const updatedTileCard = prevTileCard.filter((item) => item.id !== card.id);
 
+      // when pinned just delete from unpinned array
       if(card.pinned === true) {
-        return updatedTileCard     // when pinned, card is shifted to top
-      } else {
-        return [...updatedTileCard, card]     // when unpinned, card is shifted to bottom
+        return updatedTileCard
+      } 
+      
+      // when unpinned, card is shifted to bottom of unpinned cards
+      else {
+        return [...updatedTileCard, card]
       } ;
     });
   };
 
+  // To show/hide Drip Timer input modal
   const toggleDripTimerModal = () => {
     setDripTimerModal(!dripTimerModal)
   }
 
+  // to set and toggle drip modal
   const setDripTimer = (value) => {
     startFetchDataInterval(value)
     toggleDripTimerModal();
   }
-
-  //try to display by combining both tiles
-  // const combinedTileData = [...pinnedTileCard, ...tileCard];
-  // const sortedTileData = combinedTileData.sort((a, b) => {
-  //   // You can adjust the sorting logic here
-  //   if (a?.pinned && !b?.pinned) return -1; // Pinned tiles come first
-  //   if (!a?.pinned && b?.pinned) return 1;
-  //   return a.id - b.id; // Otherwise, sort by ID
-  // });
 
   return (
       showSplashScreen === true ?
@@ -270,6 +262,7 @@ const App = () =>{
             backgroundColor="#666666"
             // hidden={hidden}
           />
+          {/* Header */}
           <Header AppName={'KC NEWS'} onRefreshPress={()=>fetchData()} onDripTimerPress={()=>toggleDripTimerModal()}/>
           <ScrollView style={styles.container}>
             
@@ -321,6 +314,7 @@ const App = () =>{
               />
             </View>
 
+            {/* Display Detailed news when card is selected */}
             {
                 selectedCard 
                 &&
@@ -333,6 +327,7 @@ const App = () =>{
                 />
             }
 
+            {/* Display drip time customization */}
             {
               dripTimerModal
               &&
@@ -343,6 +338,7 @@ const App = () =>{
               />
             }
 
+            {/* Just for debug */}
             {/* <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "orange", borderWidth: 1, height: 50}} onPress={()=>getData('klimbClubNews')}>
               <Text style={{color: "white", fontWeight:"bold"}}>CONSOLE LOCAL NEWS</Text>
             </TouchableOpacity>
@@ -350,8 +346,8 @@ const App = () =>{
             <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "red", borderWidth: 1, height: 50}} onPress={()=>{
               resetOfflineData();
               setTileCard(false);
-              }}>
-              <Text style={{color: "white", fontWeight:"bold"}}>RESET LOCAL NEWS</Text>
+            }}>
+              <Text style={{color: "white", fontWeight:"bold"}}>RESET LOCAL NEWS</Text> 
             </TouchableOpacity> */}
           </ScrollView>
         </GestureHandlerRootView>

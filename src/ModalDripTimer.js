@@ -1,4 +1,5 @@
-import { useState } from 'react';
+// To display modal for DripTimer Input
+import React, { useState } from 'react';
 import { 
     View,
     Text,
@@ -13,20 +14,19 @@ const ModalDripTimer = ({toggleDripTimerModal, setDripTimer, visible}) => {
     let [dripTime, setDripTime] = useState(0);
 
     const handleAccept = () => {
-        // You can perform actions with the entered drip time here
-        console.log('Accepted drip time::::::::::::', parseInt(dripTime, 10), typeof parseInt(dripTime, 10));
+
+        // Handling timer if entered in decimal, and converting to milliseconds, etc.
         if(parseInt(dripTime,10) == 0){
             setDripTimer(1*10000);
         }else{
+            // by default 10 seconds
             setDripTimer(parseInt(dripTime, 10)*1000);
         }
     };
     
     const handleInputChange = (text) => {
-        console.log("..............", text, typeof text);
         // Ensure the input only contains numbers
         if (/^\d+$/.test(text) || text === '') {
-            
             setDripTime(text);
         }
     };
@@ -53,7 +53,9 @@ const ModalDripTimer = ({toggleDripTimerModal, setDripTimer, visible}) => {
         >
             <View style={styles.modalContainer}>
                 <View style={styles.modalBox}>
+                    {/* Modal Heading */}
                     <Text style={styles.heading}>Enter drip time in seconds</Text>
+                        {/* Input for time in seconds */}
                         <TextInput
                             style={styles.input}
                             placeholder="Enter number"

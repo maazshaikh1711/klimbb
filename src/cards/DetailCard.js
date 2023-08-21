@@ -1,3 +1,4 @@
+// To display a detail news screen (when clicked on News Title)
 import React from 'react';
 import { Modal, TouchableOpacity, Image, Text, View, ScrollView, StyleSheet } from 'react-native';
 
@@ -13,6 +14,8 @@ const DetailCard = ({ title, description, photoUrl, visible, onClose }) => {
       onRequestClose={onClose}
     >
       <View style={styles.modalContainer}>
+        
+        {/* For Navigating back to News title list */}
         <TouchableOpacity style={styles.backButton} onPress={onClose}>
           <View style={styles.backButtonDesign}>
             <Text style={{fontSize: 16, color:"#BB86FC"}}>{'< Back'}</Text>
@@ -24,19 +27,20 @@ const DetailCard = ({ title, description, photoUrl, visible, onClose }) => {
             <View style={styles.photoContainer}>
               {
                 photoUrl?
+                  // When photo is available
                   <Image 
                     source={{ uri: photoUrl }} 
                     style={styles.photo} 
                     resizeMode='cover'
                   />
                 :
+                  // When photo is not available
                   <Image 
                     source={require('../assets/defaultImage.jpg')} 
                     style={styles.photo} 
                     resizeMode='cover'
                   />
               }
-              {/* <Text style={{color: "#BB86FC"}}>PHOTO</Text> */}
             </View>
 
             <View style={styles.newsContainer}>
@@ -80,11 +84,9 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flexGrow: 1,
-    // backgroundColor: "green",
   },
   modalContent: {
     flex: 1,
-    // flexDirection: 'row',
   },
   photoContainer: {
     flex: 1,
@@ -103,7 +105,6 @@ const styles = StyleSheet.create({
     backgroundColor:"#666666",
   },
   titleContainer:{
-    // backgroundColor: "blue",
     marginBottom: 25,
   },
   titleText:{
@@ -113,7 +114,6 @@ const styles = StyleSheet.create({
   },
   descriptionContainer:{
     flex: 1,
-    // backgroundColor: "green",
   },
   descriptionText: {
     fontSize: 16,

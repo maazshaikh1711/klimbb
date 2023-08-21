@@ -1,3 +1,4 @@
+//To display news tiles (pinned and unpinned news tiles)
 import React from 'react';
 import { View, Text, StyleSheet, TouchableWithoutFeedback, TouchableNativeFeedback } from 'react-native';
 import { PanGestureHandler, TouchableOpacity } from 'react-native-gesture-handler';
@@ -44,10 +45,10 @@ const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinP
     <View style={styles.container}>
       {/* Red background with "DELETE" text */}
       <View style={styles.deleteContainer}>
+        
+        {/* To show delete backgound */}
         {showDelete && 
-        // <Text style={styles.deleteText}>DELETE</Text>
           <Icon name="delete" size={30} color="white" />
-        // MaterialIcons
         }
       </View>
 
@@ -60,11 +61,13 @@ const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinP
           >
             <TouchableWithoutFeedback onPress={()=>onCardPress({ id, title, description, photoUrl, showDelete})}>
               <View style={[styles.cardContent, showDelete && styles.showDeleteBackground]}>
+                
+                {/* News Title */}
                 <View style={styles.titleContainer}>
                   <Text style={styles.title}>{title}</Text>
                 </View>
 
-                {/* Circle button */}
+                {/* Pin/Unpin Button */}
                 <View style={styles.circleButtonContainer} pointerEvents="box-none">
                   <TouchableNativeFeedback
                     onPress={() => {
@@ -74,16 +77,14 @@ const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinP
                     <View style={styles.circleButton}>
                       {
                         pinned ?
+                          // Pinned icon
                           <View style={{...styles.circle}}>     
-                            {/* replace with pinned filled "pin" icon */}
-                            {/* <Text>Unpin</Text> */}
                             <Icon name="pin" size={30} color="#BB86FC" />
                           </View>
                         :
+                          // Unpinned icon
                           <View style={{...styles.circle}}>
-                          {/* replace with unpinned outlined "pin" icon */}
-                          {/* <Text>Pin</Text> */}
-                          <Icon name="pin-outline" size={30} color="white" />
+                            <Icon name="pin-outline" size={30} color="white" />
                           </View>
                       }
                     </View>
@@ -99,13 +100,12 @@ const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinP
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: 'transparent', // Transparent background to allow the red background to show
     marginBottom: 25,
     margin: 5,
     flex: 1
   },
   cardContainer: {
-    backgroundColor: 'transparent', // Transparent background to allow the red background to show
+    backgroundColor: 'transparent',
   },
   cardContent: {
     flexDirection: 'row',
@@ -150,8 +150,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   circle: {
-    width: 40, // Adjust the size of the circle button
-    height: 40, // Adjust the size of the circle button
+    width: 40, // Adjust the size of the pin button
+    height: 40, // Adjust the size of the pin button
     borderRadius: 20, // Make it a circle
     alignItems: 'center',
     justifyContent: 'center',
