@@ -15,15 +15,15 @@ const DetailCard = ({ title, description, photoUrl, visible, onClose }) => {
       <View style={styles.modalContainer}>
         <TouchableOpacity style={styles.backButton} onPress={onClose}>
           <View style={styles.backButtonDesign}>
-            <Text style={{fontSize: 16, color:"white"}}>{'< Back'}</Text>
+            <Text style={{fontSize: 16, color:"#BB86FC"}}>{'< Back'}</Text>
           </View>
         </TouchableOpacity>
     
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             {/* Photo */}
             <View style={styles.photoContainer}>
-              {/* <Image source={{ uri: photoUrl }} style={styles.photo} /> */}
-              <Text style={{color: "#666666"}}>PHOTO</Text>
+              <Image source={{ uri: photoUrl }} style={styles.photo} />
+              {/* <Text style={{color: "#BB86FC"}}>PHOTO</Text> */}
             </View>
 
             <View style={styles.newsContainer}>
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   newsContainer: {
-    flex: 3,
+    flex: 1,
     padding: 15,
     backgroundColor:"#666666",
   },

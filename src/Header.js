@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Header = ({AppName, onRefreshPress}) => {
   return (
@@ -7,10 +8,11 @@ const Header = ({AppName, onRefreshPress}) => {
       <Text style={styles.appName}>{AppName}</Text>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity style={styles.button} onPress={onRefreshPress}>
-          <Text style={styles.buttonText}>Refresh</Text>
+          <Icon name="refresh" size={30} color="#BB86FC" />
         </TouchableOpacity>
         {/* <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>Button 2</Text>
+          <Icon name="settings-suggest" size={30} color="red" />
         </TouchableOpacity> */}
       </View>
     </View>
@@ -30,7 +32,7 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: "white"
+    color: "#BB86FC"
   },
   buttonsContainer: {
     flexDirection: 'row',
