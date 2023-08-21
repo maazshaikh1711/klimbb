@@ -10,8 +10,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinPress, showDelete, photoUrl}) => {
-  console.log(`Rendering TileCard with ID: ${id}, title: ${title}, phototURL: ${photoUrl}, showDelete: ${showDelete}, pinned: ${pinned}` );
+const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinPress, showDelete, photoUrl, url}) => {
+  console.log(`Rendering TileCard with ID: ${id}, title: ${title}, phototURL: ${photoUrl}, showDelete: ${showDelete}, url: ${url}, pinned: ${pinned}` );
   const translateX = useSharedValue(0);
 
   const handleGesture = useAnimatedGestureHandler({
@@ -59,7 +59,7 @@ const TileCard = ({ id, title, description, pinned, onSwipe, onCardPress, onPinP
               { transform: [{ translateX }] },
             ]}
           >
-            <TouchableWithoutFeedback onPress={()=>onCardPress({ id, title, description, photoUrl, showDelete})}>
+            <TouchableWithoutFeedback onPress={()=>onCardPress({ id, title, description, photoUrl, url, showDelete})}>
               <View style={[styles.cardContent, showDelete && styles.showDeleteBackground]}>
                 
                 {/* News Title */}

@@ -290,6 +290,7 @@ const App = () =>{
                 id={item.id}
                 title={item.title}
                 description={item.description}
+                url={item.url}
                 photoUrl={item.urlToImage}
                 pinned={item.pinned}
                 showDelete={item.showDelete}
@@ -308,6 +309,7 @@ const App = () =>{
             <DetailCard
               title={selectedCard.title}
               description={selectedCard.description}
+              shareUrl={selectedCard.url}
               photoUrl={selectedCard.urlToImage}
               visible={selectedCard?true:false}
               onClose={toggleModal}

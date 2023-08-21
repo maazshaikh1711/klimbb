@@ -1,10 +1,34 @@
 // To display a detail news screen (when clicked on News Title)
 import React from 'react';
-import { Modal, TouchableOpacity, Image, Text, View, ScrollView, StyleSheet } from 'react-native';
+import { Modal, TouchableOpacity, Image, Text, View, ScrollView, StyleSheet, Share } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const DetailCard = ({ title, description, photoUrl, visible, onClose }) => {
+const DetailCard = ({ title, description, photoUrl, shareUrl, visible, onClose }) => {
 
-  console.log(`Detail Card Rendering: title: ${title}, description: ${description}, phtotURL: ${photoUrl}, visible: ${visible}` );
+  console.log(`Detail Card Rendering: title: ${title}, description: ${description}, phtotURL: ${photoUrl}, visible: ${visible}, shareUrl: ${shareUrl}` );
+
+  const shareNews = async () => {
+    try {
+      const result = await Share.share({
+        message: 'Check out this link:'+shareUrl,
+      });
+
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // Shared
+          console.log('Shared via:', result.activityType);
+        } else {
+          // Cancelled
+          console.log('Sharing cancelled');
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // Dismissed
+        console.log('Sharing dismissed');
+      }
+    } catch (error) {
+      console.error('Error sharing link:', error.message);
+    }
+  }
 
   return (
     <Modal
@@ -18,7 +42,13 @@ const DetailCard = ({ title, description, photoUrl, visible, onClose }) => {
         {/* For Navigating back to News title list */}
         <TouchableOpacity style={styles.backButton} onPress={onClose}>
           <View style={styles.backButtonDesign}>
-            <Text style={{fontSize: 16, color:"#BB86FC"}}>{'< Back'}</Text>
+            <Text style={{fontSize: 20, color:"#BB86FC"}}>{'< Back'}</Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.shareButton} onPress={()=>shareNews()}>
+          <View style={styles.backButtonDesign}>
+          <Icon name="share" size={25} color="#BB86FC" />
           </View>
         </TouchableOpacity>
     
@@ -72,6 +102,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 20,
     left: 20,
+    zIndex: 1,
+  },
+  shareButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
     zIndex: 1,
   },
   backButtonDesign: {
