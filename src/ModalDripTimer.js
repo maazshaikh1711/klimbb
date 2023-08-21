@@ -15,7 +15,11 @@ const ModalDripTimer = ({toggleDripTimerModal, setDripTimer, visible}) => {
     const handleAccept = () => {
         // You can perform actions with the entered drip time here
         console.log('Accepted drip time::::::::::::', parseInt(dripTime, 10), typeof parseInt(dripTime, 10));
-        setDripTimer(parseInt(dripTime, 10));
+        if(parseInt(dripTime,10) == 0){
+            setDripTimer(1*10000);
+        }else{
+            setDripTimer(parseInt(dripTime, 10)*1000);
+        }
     };
     
     const handleInputChange = (text) => {
