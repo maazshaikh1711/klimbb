@@ -18,6 +18,7 @@ import Header from './src/Header';
 import TileCard from './src/cards/TileCard';
 import DetailCard from './src/cards/DetailCard';
 import { setData, getData, resetOfflineData } from './src/offlineDataStorage';
+import ModalDripTimer from './src/ModalDripTimer';
 
 //third party imports
 const lodash = require('lodash');
@@ -35,7 +36,6 @@ const refreshTileCard = [
 ]
 
 const noOfCardsToDisplay = 5;
-let dripTimer = 10000;
 
 const App = () =>{
 
@@ -46,7 +46,8 @@ const App = () =>{
   
   const [selectedCard, setSelectedCard] = useState(false);
   const [fetchDataInterval, setFetchDataInterval] = useState(null);
-  
+  const [dripTimerModal, setDripTimerModal] = useState(false);
+  const [dripTime, setDripTime] = useState(10000);
   const [tileCard, setTileCard] = useState([]);
     // { id: 1, title: 'Title 1', description: 'Description 1', showDelete: true, pinned: false },
     // { id: 2, title: 'Title 2', description: 'Description 2', showDelete: true, pinned: false },
@@ -69,21 +70,21 @@ const App = () =>{
     initializeData();
   }, [])
 
-  const startFetchDataInterval = async () => {
+  const startFetchDataInterval = async (drip=10000) => {
     clearInterval(fetchDataInterval); // Clear existing interval
     await fetchData(); // Fetch data immediately
 
     // Set up a new interval to call fetchData every X milliseconds
     const intervalId = setInterval(async() => {
       await fetchData();
-    }, dripTimer);
+    }, drip);
     setFetchDataInterval(intervalId);
 
     // Clean up the interval when the component unmounts
     return () => {
       clearInterval(fetchDataInterval);
     };
-    
+
   };
 
   const fetchData = async () => {
@@ -234,6 +235,16 @@ const App = () =>{
     });
   };
 
+  const toggleDripTimerModal = () => {
+    setDripTimerModal(!dripTimerModal)
+  }
+
+  const setDripTimer = (value) => {
+    setDripTime(value);
+    startFetchDataInterval(value)
+    toggleDripTimerModal();
+  }
+
   //try to display by combining both tiles
   // const combinedTileData = [...pinnedTileCard, ...tileCard];
   // const sortedTileData = combinedTileData.sort((a, b) => {
@@ -250,7 +261,7 @@ const App = () =>{
         backgroundColor="#666666"
         // hidden={hidden}
       />
-      <Header AppName={'KC NEWS'} onRefreshPress={()=>fetchData()}/>
+      <Header AppName={'KC NEWS'} onRefreshPress={()=>fetchData()} onDripTimerPress={()=>toggleDripTimerModal()}/>
       <ScrollView style={styles.container}>
         
         {/* Display Pinned News Tiles */}
@@ -311,6 +322,16 @@ const App = () =>{
               visible={selectedCard?true:false}
               onClose={toggleModal}
             />
+        }
+
+        {
+          dripTimerModal
+          &&
+          <ModalDripTimer 
+            toggleDripTimerModal={toggleDripTimerModal} 
+            setDripTimer={setDripTimer}
+            visible={dripTimerModal}
+          />
         }
 
         {/* <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "orange", borderWidth: 1, height: 50}} onPress={()=>getData('klimbClubNews')}>

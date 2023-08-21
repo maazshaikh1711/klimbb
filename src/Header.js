@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const Header = ({AppName, onRefreshPress}) => {
+const Header = ({AppName, onRefreshPress, onDripTimerPress}) => {
   return (
     <View style={styles.header}>
       <Text style={styles.appName}>{AppName}</Text>
@@ -10,10 +10,9 @@ const Header = ({AppName, onRefreshPress}) => {
         <TouchableOpacity style={styles.button} onPress={onRefreshPress}>
           <Icon name="refresh" size={30} color="#BB86FC" />
         </TouchableOpacity>
-        {/* <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Button 2</Text>
-          <Icon name="settings-suggest" size={30} color="red" />
-        </TouchableOpacity> */}
+        <TouchableOpacity style={styles.button} onPress={onDripTimerPress}>
+          <Icon name="settings-suggest" size={30} color="#BB86FC" />
+        </TouchableOpacity>
       </View>
     </View>
   );
